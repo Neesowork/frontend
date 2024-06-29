@@ -87,7 +87,6 @@ async function submit()
     {
         loading_notification.remove();
         notify('error', 'Error fetching ' + (searching_vacancies ? 'vacancies' : 'resumes'), e.message);
-        console.log(e);
         return
     }
 
