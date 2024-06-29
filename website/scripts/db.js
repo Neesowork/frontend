@@ -1,6 +1,3 @@
-const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
 let response_vacancies = null;
 let response_resumes = null;
 
@@ -23,6 +20,9 @@ let resumes_filter_btn = document.getElementById('add-resumes-filter');
 let vacancies_filter_query = null;
 let resumes_filter_query = null;
 
+let notificaton_error = document.getElementsByClassName('notification-error')[0];
+let notifications_hub = document.getElementById('notifications-hub');
+
 const hostname = '127.0.0.1'
 
 function reset_tables()
@@ -34,6 +34,12 @@ function reset_tables()
     append_resumes_table();
 }
 
+function enable_tooltips(element)
+{
+    const tooltipTriggerList = element.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+}
+
 async function init()
 {
     reset_tables();
@@ -43,6 +49,7 @@ async function init()
 
     vacancies_filter_btn.onclick = () => {
         let new_filter = vacancies_filter_instance.cloneNode(true);
+        enable_tooltips(new_filter);
         new_filter.getElementsByClassName('btn-remove-filter')[0].onclick = () =>
         {
             new_filter.remove();
@@ -61,6 +68,7 @@ async function init()
 
     resumes_filter_btn.onclick = () => {
         let new_filter = resumes_filter_instance.cloneNode(true);
+        enable_tooltips(new_filter);
         new_filter.getElementsByClassName('btn-remove-filter')[0].onclick = () =>
         {
             new_filter.remove();
@@ -151,7 +159,8 @@ async function append_resumes_table()
     }
     catch (e)
     {
-        console.log(e);
+        notify('Error loading resumes', e);
+        return
     }
 
     response_resumes = await response_resumes.json();
@@ -167,7 +176,8 @@ async function append_vacancies_table()
     }
     catch (e)
     {
-        console.log(e);
+        notify('Error loading vacancies', e);
+        return
     }
 
     response_vacancies = await response_vacancies.json()
@@ -291,4 +301,15 @@ function display_vacancies_rows(json)
 
         vacancies_table_body.appendChild(table_rows[i]);
     }
+}
+
+function notify(title, description)
+{
+    notification = notificaton_error.cloneNode(true);
+    notification.getElementsByTagName('strong')[0].innerText = title;
+    notification.getElementsByClassName('toast-body')[0].innerText = description;
+
+    notification.classList.add('show')
+    notifications_hub.appendChild(notification);
+    return notification
 }
