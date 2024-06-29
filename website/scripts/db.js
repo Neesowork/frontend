@@ -191,6 +191,28 @@ window.onscrollend = () => {
     }
 }
 
+function transform_list_text(text, type = 0)
+{
+    list = JSON.parse(text);
+    if (type != 1)
+    {
+        list = JSON.parse(list);
+    }
+    let result = ''
+    for (let i = 0; i < list.length; i++)
+    {
+        if (type == 2)
+        {
+            result += list[i][0] + '\n→\n' + list[i][1] + '\n\n';
+        }
+        else
+        {
+            result += list[i] + '\n\n';
+        }
+    }
+    return result
+}
+
 function display_resumes_rows(json)
 {
     table_rows = [];
@@ -205,7 +227,25 @@ function display_resumes_rows(json)
 
         table_rows[i].appendChild(index);
 
-        let data = [json[i]['id'], json[i]['position'], json[i]['age'], json[i]['birthday'], json[i]['search_status'], json[i]['address'], json[i]['gender'], json[i]['specializations'], json[i]['about'], json[i]['salary'], json[i]['currency'], json[i]['preferred_commute_time'], json[i]['skills'], json[i]['employment'], json[i]['moving_status'], json[i]['citizenship'], json[i]['languages'], json[i]['education'], json[i]['schedule']];
+        if(json[i]['salary'] == 0)
+        {
+            json[i]['salary'] = null;
+        }
+
+        if(json[i]['currency'] == 'U')
+        {
+            json[i]['currency'] = null;
+        }
+
+
+        if(json[i]['gender'] == 'U')
+        {
+            json[i]['gender'] = null;
+        }
+
+        json[i]['id'] = json[i]['id'].slice(0,19) + '\n' + json[i]['id'].slice(19,38);
+
+        let data = [json[i]['id'], json[i]['position'], json[i]['age'], json[i]['birthday'], json[i]['search_status'], json[i]['address'], json[i]['gender'], transform_list_text(json[i]['specializations']), json[i]['about'], json[i]['salary'], json[i]['currency'], json[i]['preferred_commute_time'], transform_list_text(json[i]['skills']), transform_list_text(json[i]['employment'], 1), json[i]['moving_status'], json[i]['citizenship'], transform_list_text(json[i]['languages']), transform_list_text(json[i]['education'], 2), transform_list_text(json[i]['schedule'], 1)];
 
         for(let j = 0; j < data.length; j++)
         {
