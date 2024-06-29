@@ -1,19 +1,19 @@
 # Neesowork frontend
-> This is the frontend for the Neesowork application. See launch instructions and user guide at the [main repository](https://github.com/Neesowork/application).
+> This is the frontend repository of the Neesowork application. See launch instructions and user guide in the [main repository](https://github.com/Neesowork/application).
 ## Files overview
-``journals.svg`` serves as a website's favicon
+``journals.svg`` serves as the website's favicon
 
-``index.html`` contains html for parse query page
-
-
-``db.html`` contains html for database view page
+``index.html`` contains html for the parse query page
 
 
-``scripts/query.css`` contains JS code for parse query page
+``db.html`` contains html for the database view page
 
 
-``scripts/db.js`` contains JS code for database view page
+``scripts/query.css`` contains JS code for the parse query page
 
 
-``styles/base.css`` contains some additional styling to go alongside Bootstrap's default oneh
+``scripts/db.js`` contains JS code for the database view page
+
+
+``styles/base.css`` contains some additional styling to go alongside Bootstrap's default ones
 ## Built with Bootstrap 5 and Popper.js (for tooltips support)
