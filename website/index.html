@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <title>Neesowork</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Job offers' parser">
+        <link href="styles/base.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <nav class="navbar bg-light">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-start flex-row">
+                    <a class="navbar-brand" href="#">Nee' so' work</a>
+
+                    <ul class="navbar-nav">
+                        <li class="navbar-item">
+                            <a class="nav-link" href="db.html">Database</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal" data-bs-target="#createParseQuery">New parse query</button>
+            </div>
+        </nav>
+
+        <div class="modal fade" id="createParseQuery" tabindex="-1" aria-labelledby="createParseQueryLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">New parse query</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                  <form action="">
+                    <label for="search-text" class="form-label">Search for</label>
+                    <input type="text" class="form-control mb-3" id="search-text" placeholder="Type here...">
+                    <label for="search-text" class="form-label">On page</label>
+                    <input type="number" class="form-control" id="search-page" placeholder="Type here...">
+                    <div class="form-text mb-3">Maximum page value for the vacancies is 20 <br>(API limitation)</div>
+                    <label for="search-salary" class="form-label">With salary (RUB)</label>
+                    <input type="number" id="search-salary" class="form-control" placeholder="Type here...">
+                    <div class="form-text mb-3">For vacancies salaries more than typed are also shown <br>(API limitation)</div>
+                    <div class="d-flex align-items-start">
+                      <div class="nav flex-column nav-pills me-3" style="gap: 0.5rem;" id="search-type" role="tablist" aria-orientation="vertical">
+                        <input type="radio" class="btn-check" name="options-base" id="search-vacancies-option" autocomplete="off" checked>
+                        <label class="btn btn-outline-primary" for="search-vacancies-option">Vacancies</label>
+
+                        <input type="radio" class="btn-check" name="options-base" id="search-resumes-option" autocomplete="off">
+                        <label class="btn btn-outline-primary"" for="search-resumes-option">Resumes</label>
+                      </div>
+
+                      <div>
+                        <label class="form-label">Work experience</label>
+                        <select class="form-select mb-3" id="experience-select" aria-label="Work experience select">
+                          <option value="" selected>No preference</option>
+                          <option value="noExperience">No experience</option>
+                          <option value="between1And3">For 1-3 yrs</option>
+                          <option value="between3And6">For 3-6 yrs</option>
+                          <option value="moreThan6">For >6 yrs</option>
+                        </select>
+
+                        <label class="form-label">Employment</label>
+                        <div id="employment-select">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="full" id="flexCheckDefault1">
+                            <label class="form-check-label" for="flexCheckDefault1">
+                              Full-time
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="part" id="flexCheckDefault2">
+                            <label class="form-check-label" for="flexCheckChecked2">
+                              Part-time
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="project" id="flexCheckDefault3">
+                            <label class="form-check-label" for="flexCheckChecked3">
+                              Project-based
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="volunteer" id="flexCheckDefault4">
+                            <label class="form-check-label" for="flexCheckChecked4">
+                              Volunteer
+                            </label>
+                          </div>
+                          <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="probation" id="flexCheckDefault5">
+                            <label class="form-check-label" for="flexCheckChecked5">
+                              Probation
+                            </label>
+                          </div>
+                        </div>
+
+                        <label class="form-label">Schedule</label>
+                        <div id="schedule-select">
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="fullDay" id="flexCheckDefault1">
+                            <label class="form-check-label" for="flexCheckDefault1">
+                              Full day
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="shift" id="flexCheckDefault2">
+                            <label class="form-check-label" for="flexCheckChecked2">
+                              In shifts
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="flexible" id="flexCheckDefault3">
+                            <label class="form-check-label" for="flexCheckChecked3">
+                              Flexible
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="remote" id="flexCheckDefault4">
+                            <label class="form-check-label" for="flexCheckChecked4">
+                              Remote work
+                            </label>
+                          </div>
+                          <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" value="flyInFlyOut" id="flexCheckDefault5">
+                            <label class="form-check-label" for="flexCheckChecked5">
+                              Fly-in fly-out
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="modal-footer">
+                  <button type="submit" id="send-query-btn" class="btn btn-primary">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <div class="toast-container position-fixed bottom-0 end-0 m-2" id="notifications-hub">
+          <div class="toast notification-loading" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="toast-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-clockwise me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+              </svg>
+              <strong class="me-auto">Title</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              Description
+            </div>
+          </div>
+
+          <div class="toast notification-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle me-2" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
+              </svg>
+              <strong class="me-auto">Title</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              Description
+            </div>
+          </div>
+
+          <div class="toast notification-error" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-exclamation-circle me-2" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+              </svg>
+              <strong class="me-auto"><Title></Title></strong>
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+              Description
+            </div>
+          </div>
+        </div>
+
+        <main class="mx-5">
+            <div class="alert alert-primary alert-dismissible fade show m-3" role="alert">
+                <strong>Welcome!</strong> Enter your parse query to update the database and see the preview.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+
+            <ul class="nav nav-underline" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="vacancies-tab" data-bs-toggle="tab" data-bs-target="#vacancies-tab-pane" type="button" role="tab" aria-controls="vacansies-tab-pane" aria-selected="true">Vacancies</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="resumes-tab" data-bs-toggle="tab" data-bs-target="#resumes-tab-pane" type="button" role="tab" aria-controls="resumes-tab-pane" aria-selected="false">Resumes</button>
+                </li>
+              </ul>
+
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active table-responsive" id="vacancies-tab-pane" role="tabpanel" aria-labelledby="vacancies-tab" tabindex="0">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Schedule</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">Cur</th>
+                                <th scope="col">Experience</th>
+                                <th scope="col">Employment</th>
+                                <th scope="col">Requirements</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vacancies-table-entries">
+                          
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="resumes-tab-pane" role="tabpanel" aria-labelledby="resumes-tab" tabindex="0">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Search status</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">Gender</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Skills</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resumes-table-entries">
+
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+        </main>
+    </body>
+
+    <script src="scripts/query.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</html>
