@@ -1,49 +1,48 @@
-submit_btn = document.getElementById('send-query-btn');
-search_vacancies_option = document.getElementById('search-vacancies-option')
+const vacancies_table_body = document.getElementById('vacancies-table-entries');
+const resumes_table_body = document.getElementById('resumes-table-entries');
 
-search_textbox = document.getElementById('search-text');
-salary_textbox = document.getElementById('search-salary');
-page_textbox = document.getElementById('search-page');
+const search_textbox = document.getElementById('search-text');
+const salary_textbox = document.getElementById('search-salary');
+const page_textbox = document.getElementById('search-page');
 
-experience_select = document.getElementById('experience-select');
-employment_select = document.getElementById('employment-select');
-schedule_select = document.getElementById('schedule-select');
+const experience_select = document.getElementById('experience-select');
+const employment_select = document.getElementById('employment-select');
+const schedule_select = document.getElementById('schedule-select');
 
-notifications_hub = document.getElementById('notifications-hub');
-notifications = [
+const notifications_hub = document.getElementById('notifications-hub');
+const notifications = [
     document.getElementsByClassName('notification-loading')[0],
     document.getElementsByClassName('notification-error')[0],
     document.getElementsByClassName('notification-success')[0],
 ];
 
-vacancies_table_body = document.getElementById('vacancies-table-entries');
-resumes_table_body = document.getElementById('resumes-table-entries');
-submit_btn.onclick = submit;
+const search_vacancies_option = document.getElementById('search-vacancies-option')
+const submit_btn = document.getElementById('send-query-btn');
 
 const hostname = '127.0.0.1';
+
+function get_checked_params(within_element)
+{
+    let params = [];
+    let checkboxes = within_element.getElementsByTagName('input');
+
+    for (let i = 0; i < checkboxes.length; i++)
+    {
+        if (checkboxes[i].checked)
+        {
+            params.push(checkboxes[i].value);
+        }
+    }
+
+    return params
+}
 
 async function submit()
 {
     let searching_vacancies = search_vacancies_option.checked;
-    let employment_params = [];
-    let checkboxes = employment_select.getElementsByTagName('input');
-    for (let i = 0; i < checkboxes.length; i++)
-    {
-        if (checkboxes[i].checked)
-        {
-            employment_params.push(checkboxes[i].value);
-        }
-    }
 
-    let schedule_params = [];
-    checkboxes = schedule_select.getElementsByTagName('input');
-    for (let i = 0; i < checkboxes.length; i++)
-    {
-        if (checkboxes[i].checked)
-        {
-            schedule_params.push(checkboxes[i].value);
-        }
-    }
+    let employment_params = get_checked_params(employment_select);
+    let schedule_params = get_checked_params(schedule_select);
 
     params = {}
 
@@ -54,11 +53,28 @@ async function submit()
 
     if (salary_textbox.value)
     {
+        if (salary_textbox.value !== parseInt(salary_textbox.value, 10).toString())
+        {
+            notify('error', 'Error', 'Salary must be a valid number');
+            return;
+        }
+
         params['salary'] = salary_textbox.value;
     }
 
     if (page_textbox.value)
     {
+        if (page_textbox.value !== parseInt(page_textbox.value, 10).toString())
+        {
+            notify('error', 'Error', 'Page must be a valid number');
+            return;
+        }
+        else if (searching_vacancies && (parseInt(page_textbox.value, 10) > 20))
+        {
+            notify('error', 'Error', 'Page number cant be greater than 20 for vacancies');
+            return;
+        }
+
         params['page'] = page_textbox.value - 1;
     }
 
@@ -87,7 +103,7 @@ async function submit()
     {
         loading_notification.remove();
         notify('error', 'Error fetching ' + (searching_vacancies ? 'vacancies' : 'resumes'), e.message);
-        return
+        return;
     }
 
     loading_notification.remove();
@@ -107,30 +123,13 @@ async function submit()
     }
     else
     {
-        notify('error', 'Error', 'Could not fetch data from server');
+        notify('error', 'Error', 'Could not fetch data the from server');
     }
-}
-
-function notify(type, title, description)
-{
-    let selected_type = -1;
-
-    if (type == 'loading') selected_type = 0;
-    if (type == 'error') selected_type = 1;
-    if (type == 'success') selected_type = 2;
-
-    notification = notifications[selected_type].cloneNode(true);
-    notification.getElementsByTagName('strong')[0].innerText = title;
-    notification.getElementsByClassName('toast-body')[0].innerText = description;
-
-    notification.classList.add('show')
-    notifications_hub.appendChild(notification);
-    return notification
 }
 
 function preview_resumes(json)
 {
-    resumes_table_body.replaceChildren();
+    resumes_table_body.replaceChildren(); // Clears the table
     table_rows = [];
 
     for (let i = 0; i < json.length; i++)
@@ -162,7 +161,7 @@ function preview_resumes(json)
 
 function preview_vacancies(json)
 {
-    vacancies_table_body.replaceChildren();
+    vacancies_table_body.replaceChildren(); // Clears the table
     table_rows = [];
 
     for (let i = 0; i < json.length; i++)
@@ -191,3 +190,22 @@ function preview_vacancies(json)
         vacancies_table_body.appendChild(table_rows[i]);
     }
 }
+
+function notify(type, title, description)
+{
+    let selected_type = -1;
+
+    if (type == 'loading') selected_type = 0;
+    if (type == 'error') selected_type = 1;
+    if (type == 'success') selected_type = 2;
+
+    notification = notifications[selected_type].cloneNode(true);
+    notification.getElementsByTagName('strong')[0].innerText = title;
+    notification.getElementsByClassName('toast-body')[0].innerText = description;
+
+    notification.classList.add('show')
+    notifications_hub.appendChild(notification);
+    return notification
+}
+
+submit_btn.onclick = submit;
