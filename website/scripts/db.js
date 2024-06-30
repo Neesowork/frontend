@@ -1,37 +1,35 @@
 let response_vacancies = null;
 let response_resumes = null;
 
+let vacancies_page = 0;
+let resumes_page = 0;
+
 let vacancies_table_body = document.getElementById('vacancies-table-entries');
 let resumes_table_body = document.getElementById('resumes-table-entries');
 
-let vacancies_page = 0;
-let resumes_page = 0;
-let vacancies_tab = document.getElementById('vacancies-tab');
-
-let filters_id = 0;
-let apply_filters_btn = document.getElementById('apply-filters');
-
 let vacancies_filters_container = document.getElementById('vacancies-filters');
-let vacancies_filter_btn = document.getElementById('add-vacancies-filter');
-
 let resumes_filters_container = document.getElementById('resumes-filters');
+
+let vacancies_filter_btn = document.getElementById('add-vacancies-filter');
 let resumes_filter_btn = document.getElementById('add-resumes-filter');
+let apply_filters_btn = document.getElementById('apply-filters');
 
 let vacancies_filter_query = null;
 let resumes_filter_query = null;
 
 let notificaton_error = document.getElementsByClassName('notification-error')[0];
 let notifications_hub = document.getElementById('notifications-hub');
+let vacancies_tab = document.getElementById('vacancies-tab');
 
-const hostname = '127.0.0.1'
+const hostname = '127.0.0.1';
 
 function reset_tables()
 {
     vacancies_page = 0;
     resumes_page = 0;
     
-    append_vacancies_table();
-    append_resumes_table();
+    vacancies_table_append();
+    resumes_table_append();
 }
 
 function enable_tooltips(element)
@@ -130,29 +128,7 @@ async function init()
     }
 }
 
-function init_ordering_switches()
-{
-    let ordering_switches = [];
-    let ordering_selects = [];
-    let remove_buttons = [];
-
-    for (let i = 0; i < filters.length; i++)
-    {   
-        ordering_switches.push(filters[i].getElementsByClassName('form-check-input')[0]);
-        ordering_selects.push(filters[i].getElementsByClassName('ordering-select')[0]);
-        remove_buttons.push(filters[i].getElementsByClassName('btn-remove-filter')[0]);
-
-        ordering_switches[i].onclick = () => {
-            ordering_selects[i].disabled = !ordering_selects[i].disabled;
-        }
-
-        remove_buttons[i].onclick = () => {
-            filters[i].remove();
-        }
-    }
-}
-
-async function append_resumes_table()
+async function resumes_table_append()
 {
     try {
         response_resumes = await fetch('http://' + hostname + ':8000/db/resumes?page=' + resumes_page + (resumes_filter_query ? resumes_filter_query : ''));
@@ -169,7 +145,7 @@ async function append_resumes_table()
     resumes_page += 1;
 }
 
-async function append_vacancies_table()
+async function vacancies_table_append()
 {
     try {
         response_vacancies = await fetch('http://' + hostname + ':8000/db/vacancies?page=' + vacancies_page + (vacancies_filter_query ? vacancies_filter_query : ''));
@@ -186,17 +162,17 @@ async function append_vacancies_table()
     vacancies_page += 1;
 }
 
-init();
 window.onscrollend = () => {
+    // If scrolled almost to the bottom of the page
     if (Math.abs(document.documentElement.scrollHeight - document.documentElement.scrollTop - document.documentElement.clientHeight) < 10)
     {
         if (vacancies_tab.ariaSelected == 'true')
         {
-            append_vacancies_table();
+            vacancies_table_append();
         }
         else
         {
-            append_resumes_table();
+            resumes_table_append();
         }
     }
 }
@@ -204,6 +180,8 @@ window.onscrollend = () => {
 function transform_list_text(text, type = 0)
 {
     list = JSON.parse(text);
+    if (list == 'null') return null; // For empty JSONs
+
     if (type != 1)
     {
         list = JSON.parse(list);
@@ -236,22 +214,6 @@ function display_resumes_rows(json)
         index.innerText = resumes_page*20 + i+1;
 
         table_rows[i].appendChild(index);
-
-        if(json[i]['salary'] == 0)
-        {
-            json[i]['salary'] = null;
-        }
-
-        if(json[i]['currency'] == 'U')
-        {
-            json[i]['currency'] = null;
-        }
-
-
-        if(json[i]['gender'] == 'U')
-        {
-            json[i]['gender'] = null;
-        }
 
         json[i]['id'] = json[i]['id'].slice(0,19) + '\n' + json[i]['id'].slice(19,38);
 
@@ -306,10 +268,12 @@ function display_vacancies_rows(json)
 function notify(title, description)
 {
     notification = notificaton_error.cloneNode(true);
+
     notification.getElementsByTagName('strong')[0].innerText = title;
     notification.getElementsByClassName('toast-body')[0].innerText = description;
 
     notification.classList.add('show')
     notifications_hub.appendChild(notification);
-    return notification
 }
+
+init();
