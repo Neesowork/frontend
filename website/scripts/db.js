@@ -179,23 +179,18 @@ window.onscrollend = () => {
 
 function transform_list_text(text, type = 0)
 {
-    list = JSON.parse(text);
-    if (list == 'null') return null; // For empty JSONs
+    if (text == null) return null; // For empty JSONs
 
-    if (type != 1)
-    {
-        list = JSON.parse(list);
-    }
     let result = ''
-    for (let i = 0; i < list.length; i++)
+    for (let i = 0; i < text.length; i++)
     {
         if (type == 2)
         {
-            result += list[i][0] + '\n→\n' + list[i][1] + '\n\n';
+            result += text[i][0] + '\n→\n' + text[i][1] + '\n\n';
         }
         else
         {
-            result += list[i] + '\n\n';
+            result += text[i] + '\n\n';
         }
     }
     return result
