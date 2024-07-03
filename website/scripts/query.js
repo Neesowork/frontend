@@ -69,9 +69,9 @@ async function submit()
             notify('error', 'Error', 'Page must be a valid number');
             return;
         }
-        else if (searching_vacancies && (parseInt(page_textbox.value, 10) > 20))
+        else if (searching_vacancies && (parseInt(page_textbox.value, 10) > 100))
         {
-            notify('error', 'Error', 'Page number cant be greater than 20 for vacancies');
+            notify('error', 'Error', 'Page number cant be greater than 100 for vacancies');
             return;
         }
 
